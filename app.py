@@ -17,7 +17,10 @@ search_query = st.text_input("Enter card name (e.g., Michael Jordan rookie):", "
 
 if search_query:
     st.header("🔍 Raw Listings")
+
     search_url = f"https://www.ebay.com/sch/i.html?_nkw={search_query.replace(' ', '+')}&_sop=12"
+
+    raw_df = pd.DataFrame()  # ✅ Initialize empty DataFrame
 
     try:
         response = requests.get(search_url, headers={"User-Agent": "Mozilla/5.0"})
@@ -42,7 +45,7 @@ if search_query:
         st.error(f"An error occurred while fetching eBay listings: {e}")
 
     # --- Placeholder PSA 10 Price ---
-    # In production, replace this with scraped or API data from 130point
+    # In production, replace this with scraped or API data from 130point or elsewhere
     st.header("💎 PSA 10 Prices")
     psa_10_price = st.number_input("Enter estimated PSA 10 price manually ($):", min_value=0.0, value=100.0, step=5.0)
     st.write(f"Estimated PSA 10 price: ${psa_10_price:.2f}")
@@ -63,6 +66,8 @@ if search_query:
             st.dataframe(raw_df[["Title", "Price", "Spread to PSA 10 (%)"]])
         except Exception as e:
             st.error(f"An error occurred while calculating spread: {e}")
+    else:
+        st.warning("No raw card data available to calculate spread.")
 
     # --- Mock Sold Price History Chart ---
     st.header("📈 Sold Price History (Demo)")
@@ -80,4 +85,3 @@ if search_query:
 
 else:
     st.info("Please enter a card name to get started.")
-
